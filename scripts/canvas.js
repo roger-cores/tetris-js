@@ -1,5 +1,6 @@
 let gamePiece;
 let restingPieces = [];
+let droppingSpeed = 1;
 
 for(i=0; i<12; i++){
   restingPieces.push([]);
@@ -17,7 +18,7 @@ var myGameArea = {
         this.canvas.height = 240;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(updateGameArea, 20);
+        this.interval = setInterval(updateGameArea, 40);
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -62,8 +63,10 @@ function reOrderAtLevel(level){
       delete restingPieces[level-1][i];
       rp.y += 20;
       restingPieces[level].push(rp);
+      return true;
     }
   }
+  return false;
 }
 
 function updateGameArea() {
@@ -73,17 +76,27 @@ function updateGameArea() {
         return !gamePiece.crashWith(restingPiece);
       });
     }) && gamePiece.y < myGameArea.canvas.height - 20)
-      gamePiece.y += 1;
+      gamePiece.y += droppingSpeed;
+
     else {
+      const levels = [11,10,9,8,7,6,5,4,3,2,1];
       restingPieces[gamePiece.y/20].push(gamePiece);
 
-      collapseLevel = findCollapse();
-      console.log("cL: " + collapseLevel);
-      if(typeof collapseLevel !== 'undefined'){
-        for(let i=collapseLevel; i>=1; i--){
-          reOrderAtLevel(i);
-        }
+      let contnCollapse = true;
+      while(contnCollapse){
+        collapseLevel = findCollapse();
+        if(typeof collapseLevel !== 'undefined'){
+          contnCollapse = true;
+          let contn = true;
+          while(contn){
+            contn = levels.some(function(i){
+              return reOrderAtLevel(i);
+            });
+          }
+        } else contnCollapse = false;
       }
+
+      collapseLevel = findCollapse();
       isGameOver();
 
       gamePiece = createRect(types[getRandomInt(4)]);
@@ -114,4 +127,12 @@ function moveRight(){
     });
   }))
     gamePiece.x += 20;
+}
+
+function drop(){
+  droppingSpeed = 5;
+}
+
+function release(){
+  droppingSpeed = 1;
 }

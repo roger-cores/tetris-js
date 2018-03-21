@@ -34,9 +34,7 @@ function Rect(width, height, color, x, y) {
         ctx.fillStyle = "black";
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.fillStyle = color;
-        ctx.fillRect(this.x+3, this.y+3, this.width-6, this.height-6);
-        ctx.fillStyle = "black";
-        ctx.fillText(this.text,this.x + this.width/2, this.y + this.height/2);
+        ctx.fillRect(this.x+1, this.y+1, this.width-2, this.height-2);
 
     }
 
@@ -76,7 +74,7 @@ function Rect(width, height, color, x, y) {
       return crash;
     }
 
-    
+
 }
 
 /**
